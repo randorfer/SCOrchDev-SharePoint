@@ -679,72 +679,72 @@ Function Parse-RawSPItem
     return $SPListItem
 }
 <#
-        .SYNOPSIS
+    .SYNOPSIS
         Update SharePoint list item
 
-        .OUTPUTS
+    .OUTPUTS
         None
 
-        .PARAMETER SPUri
+    .PARAMETER SPUri
         URI of the SharePoint list or list item or list item child item to update
 
-        .PARAMETER SPFarm
+    .PARAMETER SPFarm
         The name of the SharePoint farm to query. Used with SPSite, SPList, UseSSl and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
 
-        .PARAMETER SPSite
+    .PARAMETER SPSite
         The name of the SharePoint site. Used with SPFarm, SPList, UseSSl and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
     
-        .PARAMETER SPList
+    .PARAMETER SPList
         The name of the SharePoint farm to query. Used with SPFarm, SPSite, UseSSl and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
 
-        .PARAMETER UseSSl
+    .PARAMETER UseSSl
         The name of the SharePoint site. Used with SPFarm, SPSite, SPList and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
         Default Value: True
         Action: Sets either a http or https prefix for the SPUri
 
-        .PARAMETER SPListItemIndex
+    .PARAMETER SPListItemIndex
         Index of a specific SharePoint list item to update. Used with SPFarm, SPSite, SPList and UseSSl to create SPUri
 
-        .PARAMETER Data
+    .PARAMETER Data
         A hashtable representing the data in the SharePoint list item to be updated.
         Each key must match an internal SharePoint column name or column reference.
 
-        .PARAMETER SPListItem
+    .PARAMETER SPListItem
         The SPList item with all modifications made to it to update
     
-        .PARAMETER PassThru
+    .PARAMETER PassThru
         Return an updated version of the SPListItem object or not
         Defaults to False
 
-        .PARAMETER Credential
+    .PARAMETER Credential
         Credential with rights to update SharePoint list
 
-        .EXAMPLE
+    .EXAMPLE
         Update SharePoint list item
 
         $Data = @{ 'LastRun' = (Get-Date); 'Status' = $FinalStatus }
         Update-SPListItem -SPFarm $SPFarm -SPSite $SPSite -SPList $SPList -SPListItemIndex 7 -Data $Data -Credential $SPCred
 
-        .EXAMPLE
+    .EXAMPLE
         Update SharePoint list item
 
         $SPUri = "http://q.spis.contoso.com/sites/EApps/Self_Service/_vti_bin/listdata.svc/GroomingSchedule(3)"
         $Data = @{ 'LastRun' = (Get-Date); 'Status' = $FinalStatus }
         Update-SPListItem -SPUri $SPUri -Data $Data -Credential $SPCred
 
-        .EXAMPLE
+    .EXAMPLE
         Update SharePoint list items assigned to the given team with the new team name
 
         $SPFilter = "Team eq 'WE-Apps'"
         $ListItems = Get-SPListItem -SPFarm $SPFarm -SPSIte $SPSite -SPList $SPList -Filter $SPFilter -Credential $SPCred
         Foreach($ListItem in $ListItems)
         {
-        $ListItem.Properties.Team = 'Web Hosting'
-        Update-SPListItem -SPListItem $ListItem -Credential $SPCred
+            $ListItem.Properties.Team = 'Web Hosting'
+            Update-SPListItem -SPListItem $ListItem -Credential $SPCred
         }
 #>
 Function Update-SPListItem
@@ -831,44 +831,44 @@ Function Update-SPListItem
     if($PassThru) { return $returnItem }
 }
 <#
-        .SYNOPSIS
+    .SYNOPSIS
         Add new SharePoint list item(s)
 
-        .OUTPUTS
+    .OUTPUTS
         None
 
-        .PARAMETER SPUri
+    .PARAMETER SPUri
         URI of the SharePoint list (optional)
 
-        .PARAMETER SPFarm
+    .PARAMETER SPFarm
         The name of the SharePoint farm to query. Used with SPSite, SPList and UseSSl to create SPUri
         Use this parameter set or specifiy SPUri directly
 
-        .PARAMETER SPSite
+    .PARAMETER SPSite
         The name of the SharePoint site. Used with SPFarm, SPList and UseSSl to create SPUri
         Use this parameter set or specifiy SPUri directly
     
-        .PARAMETER SPList
+    .PARAMETER SPList
         The name of the SharePoint farm to query. Used with SPFarm, SPSite and UseSSl to create SPUri
         Use this parameter set or specifiy SPUri directly
 
-        .PARAMETER UseSSl
+    .PARAMETER UseSSl
         The name of the SharePoint site. Used with SPFarm, SPSite and SPList to create SPUri
         Use this parameter set or specifiy SPUri directly
         Default Value: True
         Action: Sets either a http or https prefix for the SPUri
 
-        .PARAMETER Data
+    .PARAMETER Data
         A hashtable representing the data in the SharePoint list item to be created.
         Each key must match an internal SharePoint column name or column reference.
 
-        .PARAMETER Credential
+    .PARAMETER Credential
         Credential with rights to update SharePoint list
 
-        .EXAMPLE
+    .EXAMPLE
         Add SharePoint list item.  Any unspecified columns take default values (if any).
 
-        $Data = @{ 'LastRun' = (Get-Date); 'Status' = $FinalStatus }
+    $Data = @{ 'LastRun' = (Get-Date); 'Status' = $FinalStatus }
         Add-SPListItem -SPFarm $SPFarm -SPSite $SPSite -SPList $SPList -Data $Data
 #>
 Function Add-SPListItem
@@ -907,43 +907,43 @@ Function Add-SPListItem
                                         -Credential  $Credential
 }
 <#
-        .SYNOPSIS
+    .SYNOPSIS
         Delete target SharePoint list item
 
-        .OUTPUTS
+    .OUTPUTS
         None
 
-        .PARAMETER SPUri
+    .PARAMETER SPUri
         URI of the SharePoint list item to delete
 
-        .PARAMETER SPFarm
+    .PARAMETER SPFarm
         The name of the SharePoint farm to delete. Used with SPSite, SPList, UseSSl and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
 
-        .PARAMETER SPSite
+    .PARAMETER SPSite
         The name of the SharePoint site. Used with SPFarm, SPList, UseSSl and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
     
-        .PARAMETER SPList
+    .PARAMETER SPList
         The name of the SharePoint farm to query. Used with SPFarm, SPSite, UseSSl and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
 
-        .PARAMETER UseSSl
+    .PARAMETER UseSSl
         The name of the SharePoint site. Used with SPFarm, SPSite, SPList and SPListItemIndex to create SPUri
         Use this parameter set or specifiy SPUri directly
         Default Value: True
         Action: Sets either a http or https prefix for the SPUri
 
-        .PARAMETER SPListItemIndex
+    .PARAMETER SPListItemIndex
         Index of a specific SharePoint list item to delete
 
-        .PARAMETER SPListItem
+    .PARAMETER SPListItem
         The SPList item with all modifications made to it to delete
 
-        .PARAMETER Credential
+    .PARAMETER Credential
         Credential with rights to the SharePoint list
 
-        .EXAMPLE
+    .EXAMPLE
         Delete SharePoint list item
 #>
 Function Remove-SPListItem
@@ -991,20 +991,20 @@ Function Remove-SPListItem
     )
 }
 <#
-        .SYNOPSIS
+    .SYNOPSIS
         Given a SharePoint person, returns that person's e-mail address as listed in Active Directory.
 
-        .DESCRIPTION
+    .DESCRIPTION
         SharePoint does not always return a full description of a person. One field that is always returned
         is Account, so we can use that to do a lookup against AD.
 
-        .OUTPUTS
+    .OUTPUTS
         A string containing an e-mail address
 
-        .PARAMETER SharePointPerson
+    .PARAMETER SharePointPerson
         A Sharepoint list item describing a person (i.e. a LinkedItem describing a person from Get-SPListItem)
 
-        .EXAMPLE
+    .EXAMPLE
         $ListItem = Get-SPListItem -SPUri $Uri -ExpandProperty 'CreatedBy'
         $Email = Get-SharePointPersonEmail -SharePointPerson $ListItem.LinkedItems.CreatedBy
 #>
@@ -1016,22 +1016,22 @@ Function Get-SharePointPersonEmail
     Return $ADUser.mail
 }
 <#
-        .SYNOPSIS
+    .SYNOPSIS
         Compares the ScheduledStartTime value of the target SP List item
         against the current time. If the time is outside of the bounds returns
         false else returns true
 
-        .PARAMETER SPUri
+    .PARAMETER SPUri
         The Uri to the list item to test
 
-        .PARAMETER Credential
+    .PARAMETER Credential
         Optional. Credential to use for querying sharepoint
 
-        .PARAMETER MaxSecondOffset
+    .PARAMETER MaxSecondOffset
         The maximum number of seconds away from the list item's 'starttime' parameter
         before the function will return false
 
-        .EXAMPLE
+    .EXAMPLE
         Test-SPListItemStartTime -SPUri $NewRequestUri -MaximumSecondOffset 900
 #>
 Function Test-SPListItemStartTime
@@ -1074,45 +1074,45 @@ Function Test-SPListItemStartTime
     Return $Status
 }
 <#
-        .Synopsis
+    .Synopsis
         Adds an attachment to a SharePoint list item.
 
-        .Paramter SPUri
+    .Paramter SPUri
         The URI to the list item to attach the item to
 
-        .Paramter SPFarm
+    .Paramter SPFarm
         The farm of the list item to attach the atachment to. Used for building
         the SPUri
 
-        .Paramter SPSite
+    .Paramter SPSite
         The site of the list item to attach the atachment to. Used for building
         the SPUri
 
-        .Paramter SPList
+    .Paramter SPList
         The list of the list item to attach the atachment to. Used for building
         the SPUri
 
-        .Paramter SPCollection
+    .Paramter SPCollection
         The collection of the list item to attach the atachment to. Used for building
         the SPUri
 
-        .Paramter SPListItemIndex
+    .Paramter SPListItemIndex
         The item index of the list item to attach the atachment to. Used for building
         the SPUri
 
-        .Paramter UseSsl
+    .Paramter UseSsl
         Use SSL (True or False) for building the SPUri
 
-        .Paramter SPListItem
+    .Paramter SPListItem
         An item pointer to the item to add the attachment to
 
-        .Paramter Credential
+    .Paramter Credential
         Optional credential to use for accessing the sharepoint list
 
-        .Paramter AttachmentPath
+    .Paramter AttachmentPath
         The path to the item to attach to the list
 
-        .Example
+    .Example
         Add-SPListItemAttachment -SPListItem $SPListItem -Credential $SPCred -AttachmentPath 'C:\temp\blah.xlsx'
 #>
 Function Add-SPListItemAttachment
@@ -1255,11 +1255,11 @@ Function Get-ASMXListItem
     return $ASMXListItem
 }
 <#
-        .Synopsis
+    .Synopsis
         Takes a list item ID (path to the item for the rest interface) and converts it to the path to the
         asmx web service
 
-        .Parameter ListItemID
+    .Parameter ListItemID
         The list item ID to convert
 #>
 Function Format-SPListASMXPath
