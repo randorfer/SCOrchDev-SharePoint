@@ -68,7 +68,7 @@ Function Invoke-RestMethod-Wrapped
         Else                { $RestMethodParameters += @{ 'UseDefaultCredentials' = $True } }
 
         $Results = $null
-        Write-Debug -Message (ConvertTo-Json $RestMethodParameters)
+        Write-Debug -Message (ConvertTo-Json -InputObject $RestMethodParameters)
         $Results = Invoke-RestMethod @RestMethodParameters -Verbose:$False
     )
     return $Results
@@ -799,11 +799,11 @@ Function Update-SPListItem
         }
         Else
         {
-            Write-Error -Message "You must pass one of the following parameter sets`n" + 
-                                 "-SPUri `$SPUri -Data `$Data" +
-                                 "-SPFarm `$SPFarm -SPSite `$SPSIte -SPList `$SPList -SPListItemIndex " +
-                                 "`$SPListItemIndex -Data `$Data`n" +
-                                 "-SPListItem `$SPListITem"
+            Write-Error -Message "You must pass one of the following parameter sets`n
+                                 -SPUri `$SPUri -Data `$Data
+                                 -SPFarm `$SPFarm -SPSite `$SPSIte -SPList `$SPList -SPListItemIndex
+                                 `$SPListItemIndex -Data `$Data`n
+                                 -SPListItem `$SPListITem"
         }
 
         # Convert all datetime values in the Data hashtable to short strings
@@ -978,11 +978,11 @@ Function Remove-SPListItem
         }
         Else
         {
-            Write-Error -Message "You must pass one of the following parameter sets`n" + 
-                                 "-SPUri `$SPUri" +
-                                 "-SPFarm `$SPFarm -SPSite `$SPSIte -SPList `$SPList -SPListItemIndex " +
-                                 "`$SPListItemIndex`n" +
-                                 "-SPListItem `$SPListItem"
+            Write-Error -Message "You must pass one of the following parameter sets`n
+                                 -SPUri `$SPUri
+                                 -SPFarm `$SPFarm -SPSite `$SPSIte -SPList `$SPList -SPListItemIndex
+                                 `$SPListItemIndex`n
+                                 -SPListItem `$SPListItem"
         }
         $Invoke = Invoke-RestMethod-Wrapped -Method      Delete `
                                             -URI         $SPUri `
@@ -1176,7 +1176,7 @@ Function Add-SPListItemAttachment
             }
         }
         
-        $AttachmentFI = Get-ChildItem $AttachmentPath
+        $AttachmentFI = Get-ChildItem -Path $AttachmentPath
         $FileBytes = Get-Content -Path $AttachmentPath `
                                  -Raw `
                                  -Encoding Byte
