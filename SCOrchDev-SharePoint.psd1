@@ -12,7 +12,7 @@
 RootModule = 'SCOrchDev-SharePoint'
 
 # Version number of this module.
-ModuleVersion = '1.0.4.1'
+ModuleVersion = '2.0.0'
 
 # ID used to uniquely identify this module
 GUID = 'adfd9a51-2775-4886-9803-ff96ddfb1cf2'
@@ -81,7 +81,7 @@ AliasesToExport = '*'
 # ModuleList = @()
 
 # List of all files packaged with this module
-FileList = @('SCOrchDev-SharePoint.psd1', 'SCOrchDev-SharePoint.psm1')
+FileList = @('SCOrchDev-SharePoint.psd1', 'SCOrchDev-SharePoint.psm1', 'SCOrchDev-SharePoint.tests.ps1', 'LICENSE', 'README.md')
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess
 # PrivateData = ''
