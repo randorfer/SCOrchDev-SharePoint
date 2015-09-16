@@ -1,4 +1,5 @@
-﻿<#
+﻿#requires -Version 3 -Modules SCOrchDev-Exception
+<#
     .SYNOPSIS
         Runs a rest query and either uses a PSCredential or not
 
@@ -53,7 +54,7 @@ Function Invoke-RestMethod-Wrapped
         [Parameter(Mandatory = $False)][object] $Body,
         [Parameter(Mandatory = $False)][string] $ContentType,
         [Parameter(Mandatory = $False)][System.Collections.IDictionary] $Headers,
-        [Parameter(Mandatory = $False)][pscredential] $Credential
+        [Parameter(Mandatory = $False)][pscredential] $Credential = $Null
     )
     
     $null = $(
@@ -326,7 +327,7 @@ Function Get-SPListItem
         [Parameter(Mandatory = $False)]
         [string]$AttachmentFormat,
            
-        [Parameter(Mandatory = $False)][PSCredential] $Credential
+        [Parameter(Mandatory = $False)][PSCredential] $Credential = $Null
     )
     
     $null = $(
@@ -377,7 +378,7 @@ Function Get-SPListItem
 
         foreach( $ListItem in $RawList )
         {
-            $SPListItem = Parse-RawSPItem -ListItem $ListItem -Immutable $False
+            $SPListItem = ConvertFrom-RawSPItem -ListItem $ListItem -Immutable $False
 			
             if($ExpandProperty -contains '*')
             {
@@ -432,7 +433,7 @@ Function Get-SPListItem
 Function Get-SPListItemImmutable
 {
     Param( [Parameter(Mandatory = $True) ][string]$SPUri,
-    [Parameter(Mandatory = $False)][PSCredential] $Credential )
+    [Parameter(Mandatory = $False)][PSCredential] $Credential = $Null )
 
     $null = $(
         $Item = Invoke-RestMethod-Wrapped -Uri $SPUri -Credential $Credential
@@ -441,7 +442,7 @@ Function Get-SPListItemImmutable
             $SPItemImmutable = @()
             foreach($i in $Item)
             {
-                $SPItemImmutable += Parse-RawSPItem -ListItem $i -Immutable $True
+                $SPItemImmutable += ConvertFrom-RawSPItem -ListItem $i -Immutable $True
             }
         }
     )
@@ -555,7 +556,7 @@ Function Get-SPListItemAttachment
         [Parameter(ParameterSetName = 'ExplicitURI', Mandatory = $True)][string] $SPUri,
         [ValidateSet('ASCII','')]
         [Parameter(Mandatory = $False)][String]       $AttachmentFormat,
-        [Parameter(Mandatory = $False)][PSCredential] $Credential
+        [Parameter(Mandatory = $False)][PSCredential] $Credential = $Null
     )
 
     if($Credential)
@@ -602,7 +603,7 @@ Function Get-SPListItemAttachment
     .PARAMETER Immutable
         A flag to determine if the outputed object will be immutable or not
 #>
-Function Parse-RawSPItem
+Function ConvertFrom-RawSPItem
 {
     Param ( [Parameter(Mandatory = $True) ]       $ListItem,
     [Parameter(Mandatory = $False)][bool] $Immutable = $False )
@@ -765,7 +766,7 @@ Function Update-SPListItem
         [Parameter(ParameterSetName = 'SPListItem', Mandatory = $True)][object]$SPListItem,
 
         [Parameter(Mandatory = $False)][bool] $PassThru = $False,
-        [Parameter(Mandatory = $False)][PSCredential] $Credential 
+        [Parameter(Mandatory = $False)][PSCredential] $Credential = $Null
     )
 
     $null = $(
@@ -882,7 +883,7 @@ Function Add-SPListItem
         [Parameter(ParameterSetName = 'BuildURI', Mandatory = $False)][bool]  $UseSsl = $True,
         [Parameter(Mandatory = $True) ][HashTable]    $Data,
         [Parameter(Mandatory = $False)][bool]         $PassThru = $False,
-        [Parameter(Mandatory = $False)][PSCredential] $Credential
+        [Parameter(Mandatory = $False)][PSCredential] $Credential = $Null
     )
 
     if(-not $SPUri)
@@ -957,7 +958,7 @@ Function Remove-SPListItem
         [Parameter(ParameterSetName = 'BuildURI', Mandatory = $True) ][string]$SPListItemIndex,
         [Parameter(ParameterSetName = 'BuildURI', Mandatory = $False)][bool]  $UseSsl = $True,
         [Parameter(ParameterSetName = 'SPListItem', Mandatory = $True)][object]$SPListItem,
-        [Parameter(Mandatory = $False)][PSCredential] $Credential
+        [Parameter(Mandatory = $False)][PSCredential] $Credential = $Null
     )
 
     $null = $(
@@ -1185,7 +1186,7 @@ Function Add-SPListItemAttachment
                                          -Credential $Credential
         $WebserviceProxy = New-SharepointASMXWebserviceProxy -SPListItem $SPListItem `
                                                              -Credential $Credential
-        $Attach = $WebServiceProxy.AddAttachment(
+        $null = $WebServiceProxy.AddAttachment(
             $ASMXListItem.Title -as [string],
             $SPListItem.ListItemIndex -as [string],
             $AttachmentFI.Name -as [string],
@@ -1204,7 +1205,7 @@ Function New-SharepointASMXWebserviceProxy
 
         [Parameter(Mandatory = $False)]
         [PSCredential]
-        $Credential
+        $Credential = $Null
     )
     $Null = $(
         $WebServiceProxyParams = @{
