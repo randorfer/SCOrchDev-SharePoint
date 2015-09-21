@@ -1,4 +1,4 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $manifestPath = "$here\SCOrchDev-SharePoint.psd1"
 Import-Module SCOrchDev-SharePoint -Force
