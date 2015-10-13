@@ -1232,7 +1232,7 @@ Function Get-ASMXListItem
     )
     $null = $(
         $WebServiceProxy = New-SharepointASMXWebserviceProxy -SPListItem $SPListItem `
-        -Credential $Credential
+                                                             -Credential $Credential
         $AllASMXLists = $WebServiceProxy.GetListCollection()
         for($i = 0 ; $i -lt $AllASMXLists.List.Count ; $i++)
         {
@@ -1247,10 +1247,10 @@ Function Get-ASMXListItem
         if($i -ge $AllASMXLists.List.Count)
         {
             Throw-Exception -Type 'ASMXListMatchNotFound' `
-            -Message 'Did not find a list in the ASMX webservice with the same target name' `
-            -Property @{
-                'ListName' = $SPListItem.ListName
-            }
+                            -Message 'Did not find a list in the ASMX webservice with the same target name' `
+                            -Property @{
+                                'ListName' = $SPListItem.ListName
+                            }
         }
     )
     return $ASMXListItem
@@ -1272,7 +1272,7 @@ Function Format-SPListASMXPath
         $ListItemID
     )
 
-    $SPListASMXPath = "$($listitemid.Substring(0,$listitemid.IndexOf('/listdata.svc')))/lists.asmx?WSDL"
+    $SPListASMXPath = "$($listitemid.Substring(0,$listitemid.ToLower().IndexOf('/listdata.svc')))/lists.asmx?WSDL"
 
     Return $SPListASMXPath -as [string]
 }
