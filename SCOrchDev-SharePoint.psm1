@@ -1,4 +1,18 @@
 ﻿#requires -Version 3 -Modules SCOrchDev-Exception
+add-type @"
+        using System.Net;
+        using System.Security.Cryptography.X509Certificates;
+
+            public class IDontCarePolicy : ICertificatePolicy {
+            public IDontCarePolicy() {}
+            public bool CheckValidationResult(
+                ServicePoint sPoint, X509Certificate cert,
+                WebRequest wRequest, int certProb) {
+                return true;
+            }
+        }
+"@
+
 <#
     .SYNOPSIS
         Runs a rest query and either uses a PSCredential or not
@@ -70,6 +84,7 @@ Function Invoke-RestMethod-Wrapped
 
         $Results = $null
         Write-Debug -Message (ConvertTo-Json -InputObject $RestMethodParameters)
+        [System.Net.ServicePointManager]::CertificatePolicy = new-object IDontCarePolicy
         $Results = Invoke-RestMethod @RestMethodParameters -Verbose:$False
     )
     return $Results
@@ -610,72 +625,82 @@ Function ConvertFrom-RawSPItem
     $null = $(
         if ( $ListItem -is [System.Xml.XmlElement] ) { $Id = $ListItem.      id; $ListItemProperties = $ListItem.      Content.Properties }
         else                                         { $Id = $ListItem.Entry.id; $ListItemProperties = $ListItem.Entry.Content.Properties }
-                
-        $ListItemPropertyNames = ( $ListItemProperties | Get-Member -MemberType Property ).Name
-
-        if($ListItemPropertyNames.Contains('Created')) {  }
-        else { $ListItemCreated = [System.DateTime]::MinValue }
-
-        if($ListItemPropertyNames.Contains('Modified')) { $ListItemModified = [DateTime]$ListItemProperties.Modified.'#text' }
-        else { $ListItemModified = [System.DateTime]::MinValue }
-
-        if($ListItemPropertyNames.Contains('Version')) { $ListItemVersion = $ListItemProperties.Version.'#text' }
-        else { $ListItemVersion = [System.String]::Empty }
-
-        $PropertyList = New-Object -TypeName 'System.Collections.Generic.Dictionary[string,object]'
-        $ListItemCreated  = [System.DateTime]::MinValue
-        $ListItemModified = [System.DateTime]::MinValue
-        $ListItemVersion  = [System.String]::Empty
-
-        foreach( $PropertyName in $ListItemPropertyNames )
+        if($ListItemProperties -as [bool])
         {
-            $Property = $ListItemProperties."$PropertyName"
-            if    ( $Property -is [string]    ) { $Value = [string]$Property }
-            elseif( $Property.Null -eq 'True' ) { $Value = [string]''        }
-            else
+            $ListItemPropertyNames = ( $ListItemProperties | Get-Member -MemberType Property ).Name
+
+            if($ListItemPropertyNames.Contains('Created')) {  }
+            else { $ListItemCreated = [System.DateTime]::MinValue }
+
+            if($ListItemPropertyNames.Contains('Modified')) { $ListItemModified = [DateTime]$ListItemProperties.Modified.'#text' }
+            else { $ListItemModified = [System.DateTime]::MinValue }
+
+            if($ListItemPropertyNames.Contains('Version')) { $ListItemVersion = $ListItemProperties.Version.'#text' }
+            else { $ListItemVersion = [System.String]::Empty }
+
+            $PropertyList = New-Object -TypeName 'System.Collections.Generic.Dictionary[string,object]'
+            $ListItemCreated  = [System.DateTime]::MinValue
+            $ListItemModified = [System.DateTime]::MinValue
+            $ListItemVersion  = [System.String]::Empty
+
+            foreach( $PropertyName in $ListItemPropertyNames )
             {
-                switch -CaseSensitive ( $Property.Type )
+                $Property = $ListItemProperties."$PropertyName"
+                if    ( $Property -is [string]    ) { $Value = [string]$Property }
+                elseif( $Property.Null -eq 'True' ) { $Value = [string]''        }
+                else
                 {
-                    'Edm.DateTime'       { $Value = [datetime]$Property.'#text' }
-                    'Edm.DateTimeOffset' { $Value = [datetime]$Property.'#text' }
-                    'Edm.Time'           { $Value = [timespan]$Property.'#text' }
-                    'Edm.Int16'          { $Value = [int16]   $Property.'#text' }
-                    'Edm.Int32'          { $Value = [int32]   $Property.'#text' }
-                    'Edm.Int64'          { $Value = [int64]   $Property.'#text' }
-                    'Edm.Decimal'        { $Value = [decimal] $Property.'#text' }
-                    'Edm.Float'          { $Value = [single]  $Property.'#text' }
-                    'Edm.Double'         { $Value = [double]  $Property.'#text' }
-                    'Edm.Boolean'        { $Value = [boolean]($Property.'#text' -eq 'true') }
-                    'Edm.Byte'           { $Value = [byte]    $Property.'#text' }
-                    'Edm.SByte'          { $Value = [sbyte]   $Property.'#text' }
-                    'Edm.Guid'           { $Value = [guid]    $Property.'#text' }
-                    default              { $Value = [string]  $Property.'#text' }
+                    switch -CaseSensitive ( $Property.Type )
+                    {
+                        'Edm.DateTime'       { $Value = [datetime]$Property.'#text' }
+                        'Edm.DateTimeOffset' { $Value = [datetime]$Property.'#text' }
+                        'Edm.Time'           { $Value = [timespan]$Property.'#text' }
+                        'Edm.Int16'          { $Value = [int16]   $Property.'#text' }
+                        'Edm.Int32'          { $Value = [int32]   $Property.'#text' }
+                        'Edm.Int64'          { $Value = [int64]   $Property.'#text' }
+                        'Edm.Decimal'        { $Value = [decimal] $Property.'#text' }
+                        'Edm.Float'          { $Value = [single]  $Property.'#text' }
+                        'Edm.Double'         { $Value = [double]  $Property.'#text' }
+                        'Edm.Boolean'        { $Value = [boolean]($Property.'#text' -eq 'true') }
+                        'Edm.Byte'           { $Value = [byte]    $Property.'#text' }
+                        'Edm.SByte'          { $Value = [sbyte]   $Property.'#text' }
+                        'Edm.Guid'           { $Value = [guid]    $Property.'#text' }
+                        default              { $Value = [string]  $Property.'#text' }
+                    }
                 }
-            }
    
-            $LowerCasePropertyName = $PropertyName.ToLower()
-            Switch -CaseSensitive ( $LowerCasePropertyName )
-            {
-                'created' 
+                $LowerCasePropertyName = $PropertyName.ToLower()
+                Switch -CaseSensitive ( $LowerCasePropertyName )
                 {
-                    $ListItemCreated = $Value   
-                }
-                'modified' 
-                {
-                    $ListItemModified = $Value
-                }
-                'version' 
-                {
-                    $ListItemVersion = $Value
-                }
-                default
-                {
-                    $PropertyList.Add($PropertyName,$Value)
+                    'created' 
+                    {
+                        $ListItemCreated = $Value   
+                    }
+                    'modified' 
+                    {
+                        $ListItemModified = $Value
+                    }
+                    'version' 
+                    {
+                        $ListItemVersion = $Value
+                    }
+                    default
+                    {
+                        $PropertyList.Add($PropertyName,$Value)
+                    }
                 }
             }
+            $SPListItem = New-SPListItemObject -Id $Id -Created $ListItemCreated -Modified $ListItemModified `
+            -Version $ListItemVersion -Properties $PropertyList -Immutable:$Immutable
         }
-        $SPListItem = New-SPListItemObject -Id $Id -Created $ListItemCreated -Modified $ListItemModified `
-        -Version $ListItemVersion -Properties $PropertyList -Immutable:$Immutable
+        else
+        {
+            Throw-Exception -Type 'NoPropertiesFound' `
+                            -Message 'The returned SP List item had no properties' `
+                            -Property @{
+                                'ListItem' = $ListItem
+                            }
+        }
     )
     return $SPListItem
 }
