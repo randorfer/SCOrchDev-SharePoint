@@ -12,7 +12,7 @@
 RootModule = 'SCOrchDev-SharePoint'
 
 # Version number of this module.
-ModuleVersion = '2.0.5'
+ModuleVersion = '2.1.0'
 
 # ID used to uniquely identify this module
 GUID = 'adfd9a51-2775-4886-9803-ff96ddfb1cf2'
